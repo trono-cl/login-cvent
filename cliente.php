@@ -33,8 +33,8 @@ $client->__setSoapHeaders($header);
 //Se realiza llamado al metodo get update
 $paramsGetUpdated = array();
 $paramsGetUpdated['ObjectType'] = "Registration";
-$paramsGetUpdated['StartDate'] = "2020-10-07T00:00:00";
-$paramsGetUpdated['EndDate'] = "2020-10-08T23:59:00";
+$paramsGetUpdated['StartDate'] = "2020-10-01T00:00:00";
+$paramsGetUpdated['EndDate'] = "2020-10-10T23:59:00";
 
 $responseGetUpdated = $client->GetUpdated($paramsGetUpdated);
 

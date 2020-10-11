@@ -66,12 +66,21 @@ echo '<br/>';
 
 $CvObject = $arr_responseRetrieve[0];
 
-echo "RESPONSE:\n" . $client->__getLastResponse() . "\n";
+// echo "RESPONSE:\n" . $client->__getLastResponse() . "\n";
 
 echo '<br/>';
 echo "Retrieve ID: ";
 echo '<br/>';
-print_r($CvObject);
+// print_r($CvObject);
 
+// $json = json_encode($arr_responseRetrieve);
+$json = serialize($arr_responseRetrieve);
+// $LastName = $CvObject['LastName'];
+var_dump($json);
+
+echo '<br></br><br></br>';
+
+// echo 'The name is: '. $FirstName . '</br>';
+// echo 'The Lastname is: '. $LastName . '</br>';
 
 ?>
