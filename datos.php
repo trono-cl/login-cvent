@@ -68,16 +68,9 @@ echo '<br/>';
 
 $tamano = count($responseRetrieve->RetrieveResult->CvObject);
 $i=0;
+$z=1;
 
 $producNameArray = array("General Conference Pass", "Premium Conference Pass","Premium Plus+ Conference Pass", "Executive Track", "Prospective Customer Track", "Cherwell Staff");
-
-$ProductNameGenera = 1;
-$ProductNamePremium = 2;
-$ProductNameProspective = 3;
-$ProductNamePremiumPlus= 4;
-$ProductNameExecutive = 5;
-$ProductNameStaff = 6;
-
 $temp = 0;
 
 if($tamano > 0) {
@@ -103,33 +96,46 @@ if($tamano > 0) {
 
                 // iterar OrderDetail
                 //$order_detail = [];
+
+                $valor = [];
+
                 foreach($responseRetrieve->RetrieveResult->CvObject[$i]->OrderDetail as $order) {
 
                         if (in_array($order->ProductName,$producNameArray)){
 
                                 if ($order->ProductName == 'General Conference Pass') {
-                                        $valor = 1;
+                                       array_push($valor, 1);
                                 } elseif ($order->ProductName == 'Premium Conference Pass') {
-                                        $valor = 2;
+                                        array_push($valor, 2);
                                 } elseif ($order->ProductName == 'Prospective Customer Track') {
-                                        $valor = 3;
+                                        array_push($valor, 3);
                                 } elseif ($order->ProductName == 'Premium Plus+ Conference Pass') {
-                                        $valor = 4;
+                                        array_push($valor, 4);
                                 } elseif ($order->ProductName == 'Executive Track') {
-                                        $valor = 5;
+                                        array_push($valor, 5);
                                 } elseif ($order->ProductName == 'Cherwell Staff') {
-                                        $valor = 6;
+                                        array_push($valor, 6);
                                 }
 
-                                $data .= "'".$valor."')";
+                               
+
+                                        /*for($x=1; $x=6; $x++){
+                                                if($temp > $valor){
+                                                        $temp = $valor;
+                                                        $valor = $temp;
+                                                }       
+                                        }*/
+
+                                //$data .= "'".$valor."')";
 
                                 /*$order_detail[] = [
                                         'ProductName' => htmlspecialchars($order->ProductName, ENT_QUOTES)
                                 ];*/
                         }
                 }
+                $maxValor = max($valor);
 
-                //$data .= "'".$valor."')";
+                $data .= "'".$maxValor."')";
 
                 // convertimos el orderDetail a json para guardar en base de datos
                 //$data .= "'".json_encode($order_detail, JSON_HEX_APOS)."')";
@@ -138,11 +144,11 @@ if($tamano > 0) {
         }
 
         // agregamos la sentencia insert y concatenamos los valoresdefinidos
-        $insert = "INSERT INTO apicvent (Id, FirstName, LastName, EmailAddress, EventId, ConfirmationNumber, ProductName) VALUES ".$data;
+        $insert = "INSERT INTO apicvent (Id, FirstName, LastName, EmailAddress, EventId, ConfirmationNumber, PassType) VALUES ".$data;
 
         echo $insert;
         // ejecutamos la query
-        //$conn->exec($insert);
+        $conn->exec($insert);
 
         echo 'Registrado exitosamente';
 }
