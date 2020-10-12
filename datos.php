@@ -10,8 +10,8 @@ $client = new SoapClient("https://api.cvent.com/soap/V200611.ASMX?WSDL", array('
 
 $params = array();
 $params['AccountNumber']    = $AccountNumber;
-$params['UserName']    = $UserName;
-$params['Password']    = $Password;
+$params['UserName']         = $UserName;
+$params['Password']         = $Password;
 
 $response = $client->Login($params);
 
@@ -24,10 +24,6 @@ $ServerURL = $arr_response[0];
 $LoginSuccess = $arr_response[1];
 $CventSessionHeader = $arr_response[2];
 
-echo "CventClient:" . "<br />";
-echo "ServerURL: " . $ServerURL . "<br />";
-echo "LogginSuccess: " . $LoginSuccess . "<br />";
-echo "CventSessionHeader: " . $CventSessionHeader.'<br/>' ;
 
 //fin de llamado del login
 //se setea cabecera con el CventSessionHeader
@@ -49,10 +45,6 @@ $arr_responseGetUpdated[] = $responseGetUpdated->GetUpdatedResult->Id;
 
 $id = $arr_responseGetUpdated[0];
 
-echo "getUpdate ID: ";
-echo '<br/>';
-print_r($id);
-
 //LLamado a retrieve
 $paramsRetrieve = array();
 $paramsRetrieve['ObjectType']   = "Registration";
@@ -66,21 +58,28 @@ echo '<br/>';
 
 $CvObject = $arr_responseRetrieve[0];
 
-// echo "RESPONSE:\n" . $client->__getLastResponse() . "\n";
-
+/*echo '<br/>';
+echo "Retrieve IDs: ";
 echo '<br/>';
-echo "Retrieve ID: ";
-echo '<br/>';
-// print_r($CvObject);
+*/
 
-// $json = json_encode($arr_responseRetrieve);
-$json = serialize($arr_responseRetrieve);
-// $LastName = $CvObject['LastName'];
-var_dump($json);
+//print_r($responseRetrieve->RetrieveResult->CvObject[0]);
+//print_r($responseRetrieve->RetrieveResult->CvObject[0]->OrderDetail->OrderDetailId);
 
-echo '<br></br><br></br>';
+$tamano = count($responseRetrieve->RetrieveResult->CvObject);
+$i=0;
 
-// echo 'The name is: '. $FirstName . '</br>';
-// echo 'The Lastname is: '. $LastName . '</br>';
+for($i=0; $i<$tamano; $i++){
+        echo "<br/>";
+        echo "CvObject " . $i . "<br/>";
+        echo "ID: " . $responseRetrieve->RetrieveResult->CvObject[$i]->Id . "<br/>";
+        echo "FirstName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->FirstName . "<br/>";
+        echo "LastName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->LastName . "<br/>";
+        echo "EmailAddress: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress . "<br/>";
+        echo "EventId: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EventId . "<br/>";
+        echo "ConfirmationNumber: " . $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber . "<br/>";
+        echo "<br/>";
+}
+
 
 ?>
