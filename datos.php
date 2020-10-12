@@ -69,17 +69,44 @@ echo '<br/>';
 $tamano = count($responseRetrieve->RetrieveResult->CvObject);
 $i=0;
 
-for($i=0; $i<$tamano; $i++){
-        echo "<br/>";
-        echo "CvObject " . $i . "<br/>";
-        echo "ID: " . $responseRetrieve->RetrieveResult->CvObject[$i]->Id . "<br/>";
-        echo "FirstName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->FirstName . "<br/>";
-        echo "LastName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->LastName . "<br/>";
-        echo "EmailAddress: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress . "<br/>";
-        echo "EventId: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EventId . "<br/>";
-        echo "ConfirmationNumber: " . $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber . "<br/>";
-        echo "<br/>";
+
+if($tamano > 0) {
+
+        //coneccion a base de datos
+        include "connect.php";
+
+        // eliminamos los registros de la tabla para insertar los nuevos
+        $delete = "delete from apicvent";
+        $conn->query($delete);
+
+        // cargar query con los nuevo registros
+        $data = "";
+
+        for($i=0; $i<$tamano; $i++){
+
+               $data .= "('".$responseRetrieve->RetrieveResult->CvObject[$i]->Id."',"; // ID
+               $data .= "'".$responseRetrieve->RetrieveResult->CvObject[$i]->FirstName."',"; // firstname
+               $data .= "'".$responseRetrieve->RetrieveResult->CvObject[$i]->LastName."',"; // lastname
+               $data .= "'".$responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress."',"; //email
+               $data .= "'".$responseRetrieve->RetrieveResult->CvObject[$i]->EventId."',"; // eventId
+               $data .= "'".$responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber."',"; // confirm
+               $data .= "'produt')";
+
+               $data .= ($i < $tamano-1) ? "," : "";
+        }
+
+        // agregamos la sentencia insert y concatenamos los valoresdefinidos
+        $insert = "INSERT INTO apicvent (Id, FirstName, LastName, EmailAddress, EventId, ConfirmationNumber, ProductName) VALUES ".$data;
+
+        // ejecutamos la query
+        $conn->exec($insert);
 }
 
 
-?>
+// 
+
+// $sth = $conn->query("select * from apicvent");
+
+// print_r($sth->fetch());
+// exit;
+
