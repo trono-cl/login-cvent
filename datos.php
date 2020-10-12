@@ -69,17 +69,97 @@ echo '<br/>';
 $tamano = count($responseRetrieve->RetrieveResult->CvObject);
 $i=0;
 
-for($i=0; $i<$tamano; $i++){
-        echo "<br/>";
-        echo "CvObject " . $i . "<br/>";
-        echo "ID: " . $responseRetrieve->RetrieveResult->CvObject[$i]->Id . "<br/>";
-        echo "FirstName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->FirstName . "<br/>";
-        echo "LastName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->LastName . "<br/>";
-        echo "EmailAddress: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress . "<br/>";
-        echo "EventId: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EventId . "<br/>";
-        echo "ConfirmationNumber: " . $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber . "<br/>";
-        echo "<br/>";
+$producNameArray = array("General Conference Pass", "Premium Conference Pass","Premium Plus+ Conference Pass", "Executive Track", "Prospective Customer Track", "Cherwell Staff");
+
+$ProductNameGenera = 1;
+$ProductNamePremium = 2;
+$ProductNameProspective = 3;
+$ProductNamePremiumPlus= 4;
+$ProductNameExecutive = 5;
+$ProductNameStaff = 6;
+
+$temp = 0;
+
+if($tamano > 0) {
+
+        //coneccion a base de datos
+        include "connect.php";
+
+        // // eliminamos los registros de la tabla para insertar los nuevos
+        $delete = "delete from apicvent";
+        $conn->query($delete);
+
+        // cargar query con los nuevo registros
+        $data = "";
+
+        for($i=0; $i<$tamano; $i++){
+
+                $data .= "('".($responseRetrieve->RetrieveResult->CvObject[$i]->Id ?? '')."',"; // ID
+                $data .= "'".($responseRetrieve->RetrieveResult->CvObject[$i]->FirstName ?? '')."',"; // firstname
+                $data .= "'".($responseRetrieve->RetrieveResult->CvObject[$i]->LastName ?? '')."',"; // lastname
+                $data .= "'".($responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress ?? '')."',"; //email
+                $data .= "'".($responseRetrieve->RetrieveResult->CvObject[$i]->EventId ?? '')."',"; // eventId
+                $data .= "'".($responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber ?? '')."',"; // confirm
+
+                // iterar OrderDetail
+                //$order_detail = [];
+                foreach($responseRetrieve->RetrieveResult->CvObject[$i]->OrderDetail as $order) {
+
+                        if (in_array($order->ProductName,$producNameArray)){
+
+                                if ($order->ProductName == 'General Conference Pass') {
+                                        $valor = 1;
+                                } elseif ($order->ProductName == 'Premium Conference Pass') {
+                                        $valor = 2;
+                                } elseif ($order->ProductName == 'Prospective Customer Track') {
+                                        $valor = 3;
+                                } elseif ($order->ProductName == 'Premium Plus+ Conference Pass') {
+                                        $valor = 4;
+                                } elseif ($order->ProductName == 'Executive Track') {
+                                        $valor = 5;
+                                } elseif ($order->ProductName == 'Cherwell Staff') {
+                                        $valor = 6;
+                                }
+
+                                $data .= "'".$valor."')";
+
+                                /*$order_detail[] = [
+                                        'ProductName' => htmlspecialchars($order->ProductName, ENT_QUOTES)
+                                ];*/
+                        }
+                }
+
+                //$data .= "'".$valor."')";
+
+                // convertimos el orderDetail a json para guardar en base de datos
+                //$data .= "'".json_encode($order_detail, JSON_HEX_APOS)."')";
+
+                $data .= ($i < $tamano-1) ? "," : "";
+        }
+
+        // agregamos la sentencia insert y concatenamos los valoresdefinidos
+        $insert = "INSERT INTO apicvent (Id, FirstName, LastName, EmailAddress, EventId, ConfirmationNumber, ProductName) VALUES ".$data;
+
+        echo $insert;
+        // ejecutamos la query
+        //$conn->exec($insert);
+
+        echo 'Registrado exitosamente';
 }
 
 
-?>
+// 
+
+// $sth = $conn->query("select * from apicvent");
+
+// print_r($sth->fetch());
+// exit;
+
+//ProductName="General Conference Pass" = 1
+//ProductName="Premium Conference Pass" = 2
+//ProductName="Prospective Customer Track" = 3
+//ProductName="Premium Plus+ Conference Pass" = 4
+//ProductName="Executive Track" = 5
+//ProductName="Cherwell Staff" = 6
+
+//if (($order->ProductName == "General Conference Pass" or $order->ProductName == "Premium Conference Pass"  or $order->ProductName == "Premium Plus+ Conference Pass" or $order->ProductName == "Executive Track" or $order->ProductName == "Prospective Customer Track" or $order->ProductName == "Cherwell Staff") {
