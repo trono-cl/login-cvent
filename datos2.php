@@ -3,9 +3,11 @@
 $AccountNumber = 'CSLLCCO001';
 $UserName = 'CSLLCCO001Api2';
 $Password = 'DfYzuUIUdXu';
-$email = $_POST['email'];
 $event = "A21A10B7-ABCF-48DC-86ED-57D095B947DC";
-//$confirmation = $_POST['confirmation'];
+$email = $_POST['email'];
+$confirmation = $_POST['confirmation'];
+
+
 
 $client = new SoapClient("https://api.cvent.com/soap/V200611.ASMX?WSDL", array('trace' => true, 'exceptions' => true));
 
@@ -71,15 +73,14 @@ if($tamano != 1) {
 
     for($i=0; $i<$tamano; $i++){
 
+            $ConfirmationNumber = $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber; // confirm
+            if($confirmation == $ConfirmationNumber)
+            {
             $idUser = $responseRetrieve->RetrieveResult->CvObject[$i]->Id; // ID
             $FirstName = $responseRetrieve->RetrieveResult->CvObject[$i]->FirstName; // firstname
             $LastName = $responseRetrieve->RetrieveResult->CvObject[$i]->LastName; // lastname
             $EmailAddress = $responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress; //email
             $EventId = $responseRetrieve->RetrieveResult->CvObject[$i]->EventId; // eventId
-            $ConfirmationNumber = $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber; // confirm
-
-            // iterar OrderDetail
-            //$order_detail = [];
 
             $valor = [];
 
@@ -103,28 +104,24 @@ if($tamano != 1) {
                     }
             }
             $maxValor = max($valor);
+        }else {
+            echo "Confirmation Number ERROR";
+        }
 
     }
-echo "idUser " . $idUser .'<br/>';
-echo "FirstName " . $FirstName .'<br/>';
-echo "LastName " . $LastName .'<br/>';
-echo "EmailAddress " . $EmailAddress .'<br/>';
-echo "EventId " . $EventId .'<br/>';
-echo "ConfirmationNumber " . $ConfirmationNumber .'<br/>';
-echo "maxValor " . $maxValor .'<br/>';
-
 }
 else
 {
-    for($i=0; $i<$tamano; $i++){
-
+        $ConfirmationNumber = $responseRetrieve->RetrieveResult->CvObject->ConfirmationNumber; // confirm
+        if($confirmation == $ConfirmationNumber)
+        {
         $idUser = $responseRetrieve->RetrieveResult->CvObject->Id; // ID
         $FirstName = $responseRetrieve->RetrieveResult->CvObject->FirstName; // firstname
         $LastName = $responseRetrieve->RetrieveResult->CvObject->LastName; // lastname
         $EmailAddress = $responseRetrieve->RetrieveResult->CvObject->EmailAddress; //email
         $EventId = $responseRetrieve->RetrieveResult->CvObject->EventId; // eventId
         $ConfirmationNumber = $responseRetrieve->RetrieveResult->CvObject->ConfirmationNumber; // confirm
-
+        
         $valor = [];
 
         foreach($responseRetrieve->RetrieveResult->CvObject->OrderDetail as $order) {
@@ -147,15 +144,18 @@ else
                 }
         }
         $maxValor = max($valor);
+
+        echo "idUser " . $idUser .'<br/>';
+        echo "FirstName " . $FirstName .'<br/>';
+        echo "LastName " . $LastName .'<br/>';
+        echo "EmailAddress " . $EmailAddress .'<br/>';
+        echo "EventId " . $EventId .'<br/>';
+        echo "ConfirmationNumber " . $ConfirmationNumber .'<br/>';
+        echo "maxValor " . $maxValor .'<br/>';
         
-}
-echo "idUser " . $idUser .'<br/>';
-echo "FirstName " . $FirstName .'<br/>';
-echo "LastName " . $LastName .'<br/>';
-echo "EmailAddress " . $EmailAddress .'<br/>';
-echo "EventId " . $EventId .'<br/>';
-echo "ConfirmationNumber " . $ConfirmationNumber .'<br/>';
-echo "maxValor " . $maxValor .'<br/>';
+        }else {
+            echo "Confirmation Number ERROR";
+        }
 }
 }else{
     echo "No users registration";
