@@ -44,7 +44,7 @@ $responseSearch = $client->Search($paramsSearch);
 
 if($responseSearch->SearchResult->Id != "")     
 {
-echo "entra";
+
 $arr_responseSearch = array();
 $arr_responseSearch[] = $responseSearch->SearchResult->Id;
 $id = $arr_responseSearch[0];
@@ -69,7 +69,6 @@ $producNameArray = array("General Conference Pass", "Premium Conference Pass","P
 
 if($tamano != 1) {
 
-    echo "A";
     for($i=0; $i<$tamano; $i++){
 
             $idUser = $responseRetrieve->RetrieveResult->CvObject[$i]->Id; // ID
@@ -106,11 +105,17 @@ if($tamano != 1) {
             $maxValor = max($valor);
 
     }
+echo "idUser " . $idUser .'<br/>';
+echo "FirstName " . $FirstName .'<br/>';
+echo "LastName " . $LastName .'<br/>';
+echo "EmailAddress " . $EmailAddress .'<br/>';
+echo "EventId " . $EventId .'<br/>';
+echo "ConfirmationNumber " . $ConfirmationNumber .'<br/>';
+echo "maxValor " . $maxValor .'<br/>';
 
 }
 else
 {
-    echo "B";
     for($i=0; $i<$tamano; $i++){
 
         $idUser = $responseRetrieve->RetrieveResult->CvObject->Id; // ID
@@ -142,8 +147,15 @@ else
                 }
         }
         $maxValor = max($valor);
-
+        
 }
+echo "idUser " . $idUser .'<br/>';
+echo "FirstName " . $FirstName .'<br/>';
+echo "LastName " . $LastName .'<br/>';
+echo "EmailAddress " . $EmailAddress .'<br/>';
+echo "EventId " . $EventId .'<br/>';
+echo "ConfirmationNumber " . $ConfirmationNumber .'<br/>';
+echo "maxValor " . $maxValor .'<br/>';
 }
 }else{
     echo "No users registration";
