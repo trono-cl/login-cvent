@@ -1,10 +1,10 @@
 <?php
 
-$AccountNumber = $_POST['AccountNumber'];
-$UserName = $_POST['UserName'];
-$Password = $_POST['Password'];
-$StartDate = $_POST['StartDate'];
-$EndDate = $_POST['EndDate'];
+$AccountNumber = 'CSLLCCO001';
+$UserName = 'CSLLCCO001Api2';
+$Password = 'DfYzuUIUdXu';
+$email = $_POST['email'];
+//$confirmation = $_POST['confirmation'];
 
 $client = new SoapClient("https://api.cvent.com/soap/V200611.ASMX?WSDL", array('trace' => true, 'exceptions' => true));
 
@@ -49,8 +49,8 @@ $id = $arr_responseGetUpdated[0];*/
 //Se realiza llamado al metodo get Searh
 $paramsSearch = array();
 $paramsSearch['ObjectType'] = "Registration";
-$paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EmailAddress', 'Operator' => 'Equals', 'Value' => 'ida.pennymon@cherwell.com');
-$paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EventId', 'Operator' => 'Equals', 'Value' => '49f2947a-0475-4a3e-afd5-ba1dab586299');
+$paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EmailAddress', 'Operator' => 'Equals', 'Value' => $email);
+$paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EventId', 'Operator' => 'Equals', 'Value' => 'A21A10B7-ABCF-48DC-86ED-57D095B947DC');
 
 $responseSearch = $client->Search($paramsSearch);
 
@@ -71,47 +71,106 @@ $responseRetrieve  = $client->Retrieve($paramsRetrieve);
 
 $arr_responseRetrieve = array();
 $arr_responseRetrieve[] = $responseRetrieve->RetrieveResult->CvObject;
-echo '<br/>';
 
 $CvObject = $arr_responseRetrieve[0];
 
-//print_r($responseRetrieve->RetrieveResult->CvObject->Id);
+//$tamano = count($responseRetrieve->RetrieveResult->CvObject);
+$tamano = 1;
 
-/*echo '<br/>';
-echo "Retrieve IDs: ";
-echo '<br/>';
-*/
+$producNameArray = array("General Conference Pass", "Premium Conference Pass","Premium Plus+ Conference Pass", "Executive Track", "Prospective Customer Track", "Cherwell Staff");
 
-//print_r($responseRetrieve->RetrieveResult->CvObject[0]);
-//print_r($responseRetrieve->RetrieveResult->CvObject[0]->OrderDetail->OrderDetailId);
+if($tamano != 1) {
 
-$tamano = count($responseRetrieve->RetrieveResult->CvObject);
-$i=0;
+    echo "A";
+    for($i=0; $i<$tamano; $i++){
 
-for($i=0; $i<$tamano; $i++){
-    if ($tamano != 1) {
-        echo "<br/>";
-        echo "CvObject " . $i . "<br/>";
-        echo "ID: " . $responseRetrieve->RetrieveResult->CvObject[$i]->Id . "<br/>";
-        echo "FirstName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->FirstName . "<br/>";
-        echo "LastName: " . $responseRetrieve->RetrieveResult->CvObject[$i]->LastName . "<br/>";
-        echo "EmailAddress: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress . "<br/>";
-        echo "EventId: " . $responseRetrieve->RetrieveResult->CvObject[$i]->EventId . "<br/>";
-        echo "ConfirmationNumber: " . $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber . "<br/>";
-        echo "<br/>";
+            $idUser = $responseRetrieve->RetrieveResult->CvObject[$i]->Id; // ID
+            $FirstName = $responseRetrieve->RetrieveResult->CvObject[$i]->FirstName; // firstname
+            $LastName = $responseRetrieve->RetrieveResult->CvObject[$i]->LastName; // lastname
+            $EmailAddress = $responseRetrieve->RetrieveResult->CvObject[$i]->EmailAddress; //email
+            $EventId = $responseRetrieve->RetrieveResult->CvObject[$i]->EventId; // eventId
+            $ConfirmationNumber = $responseRetrieve->RetrieveResult->CvObject[$i]->ConfirmationNumber; // confirm
+
+            // iterar OrderDetail
+            //$order_detail = [];
+
+            $valor = [];
+
+            foreach($responseRetrieve->RetrieveResult->CvObject[$i]->OrderDetail as $order) {
+
+                    if (in_array($order->ProductName,$producNameArray)){
+
+                            if ($order->ProductName == 'General Conference Pass') {
+                                   array_push($valor, 1);
+                            } elseif ($order->ProductName == 'Premium Conference Pass') {
+                                    array_push($valor, 2);
+                            } elseif ($order->ProductName == 'Prospective Customer Track') {
+                                    array_push($valor, 3);
+                            } elseif ($order->ProductName == 'Premium Plus+ Conference Pass') {
+                                    array_push($valor, 4);
+                            } elseif ($order->ProductName == 'Executive Track') {
+                                    array_push($valor, 5);
+                            } elseif ($order->ProductName == 'Cherwell Staff') {
+                                    array_push($valor, 6);
+                            }
+                    }
+            }
+            $maxValor = max($valor);
+
     }
-    else
-    { 
-        echo "<br/>";
-        echo "CvObject " . $i . "<br/>";
-        echo "ID: " . $responseRetrieve->RetrieveResult->CvObject->Id . "<br/>";
-        echo "FirstName: " . $responseRetrieve->RetrieveResult->CvObject->FirstName . "<br/>";
-        echo "LastName: " . $responseRetrieve->RetrieveResult->CvObject->LastName . "<br/>";
-        echo "EmailAddress: " . $responseRetrieve->RetrieveResult->CvObject->EmailAddress . "<br/>";
-        echo "EventId: " . $responseRetrieve->RetrieveResult->CvObject->EventId . "<br/>";
-        echo "ConfirmationNumber: " . $responseRetrieve->RetrieveResult->CvObject->ConfirmationNumber . "<br/>";
-        echo "<br/>";
-    }
+
+    // agregamos la sentencia insert y concatenamos los valoresdefinidos
+
+    echo 'idUser: ' . $idUser . "<br/>";
+    echo 'FirstName: ' . $FirstName . "<br/>";
+    echo 'LastName: ' . $LastName . "<br/>";
+    echo 'EmailAddress: ' . $EmailAddress . "<br/>"; 
+    echo 'EventId: ' . $EventId . "<br/>";
+    echo 'maxValor: ' . $maxValor . "<br/>";
+
+}
+else
+{
+    echo "B";
+    for($i=0; $i<$tamano; $i++){
+
+        $idUser = $responseRetrieve->RetrieveResult->CvObject->Id; // ID
+        $FirstName = $responseRetrieve->RetrieveResult->CvObject->FirstName; // firstname
+        $LastName = $responseRetrieve->RetrieveResult->CvObject->LastName; // lastname
+        $EmailAddress = $responseRetrieve->RetrieveResult->CvObject->EmailAddress; //email
+        $EventId = $responseRetrieve->RetrieveResult->CvObject->EventId; // eventId
+        $ConfirmationNumber = $responseRetrieve->RetrieveResult->CvObject->ConfirmationNumber; // confirm
+
+        $valor = [];
+
+        foreach($responseRetrieve->RetrieveResult->CvObject->OrderDetail as $order) {
+
+                if (in_array($order->ProductName,$producNameArray)){
+
+                        if ($order->ProductName == 'General Conference Pass') {
+                               array_push($valor, 1);
+                        } elseif ($order->ProductName == 'Premium Conference Pass') {
+                                array_push($valor, 2);
+                        } elseif ($order->ProductName == 'Prospective Customer Track') {
+                                array_push($valor, 3);
+                        } elseif ($order->ProductName == 'Premium Plus+ Conference Pass') {
+                                array_push($valor, 4);
+                        } elseif ($order->ProductName == 'Executive Track') {
+                                array_push($valor, 5);
+                        } elseif ($order->ProductName == 'Cherwell Staff') {
+                                array_push($valor, 6);
+                        }
+                }
+        }
+        $maxValor = max($valor);
+
+}
+    echo 'idUser: ' . $idUser . "<br/>";
+    echo 'FirstName: ' . $FirstName . "<br/>";
+    echo 'LastName: ' . $LastName . "<br/>";
+    echo 'EmailAddress: ' . $EmailAddress . "<br/>"; 
+    echo 'EventId: ' . $EventId . "<br/>";
+    echo 'maxValor: ' . $maxValor . "<br/>";
 }
 
 
