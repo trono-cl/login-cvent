@@ -4,6 +4,7 @@ $AccountNumber = 'CSLLCCO001';
 $UserName = 'CSLLCCO001Api2';
 $Password = 'DfYzuUIUdXu';
 $email = $_POST['email'];
+$event = "A21A10B7-ABCF-48DC-86ED-57D095B947DC";
 //$confirmation = $_POST['confirmation'];
 
 $client = new SoapClient("https://api.cvent.com/soap/V200611.ASMX?WSDL", array('trace' => true, 'exceptions' => true));
@@ -24,41 +25,28 @@ $ServerURL = $arr_response[0];
 $LoginSuccess = $arr_response[1];
 $CventSessionHeader = $arr_response[2];
 
-
 //fin de llamado del login
+
 //se setea cabecera con el CventSessionHeader
 $client->__setLocation($ServerURL);
 $header_body = array('CventSessionValue' => $CventSessionHeader);
 $header = new SoapHeader('http://api.cvent.com/2006-11', 'CventSessionHeader', $header_body);
 $client->__setSoapHeaders($header);
 
-/*/Se realiza llamado al metodo get update
-$paramsGetUpdated = array();
-$paramsGetUpdated['ObjectType'] = "Registration";
-$paramsGetUpdated['StartDate'] = $StartDate;
-$paramsGetUpdated['EndDate'] = $EndDate;
-
-$responseGetUpdated = $client->GetUpdated($paramsGetUpdated);
-
-$arr_responseGetUpdated = array();
-$arr_responseGetUpdated[] = $responseGetUpdated->GetUpdatedResult->Id;
-
-$id = $arr_responseGetUpdated[0];*/
-
 
 //Se realiza llamado al metodo get Searh
 $paramsSearch = array();
 $paramsSearch['ObjectType'] = "Registration";
 $paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EmailAddress', 'Operator' => 'Equals', 'Value' => $email);
-$paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EventId', 'Operator' => 'Equals', 'Value' => 'A21A10B7-ABCF-48DC-86ED-57D095B947DC');
+$paramsSearch['CvSearchObject']['Filter'][] = array('Field' => 'EventId', 'Operator' => 'Equals', 'Value' => $event);
 
 $responseSearch = $client->Search($paramsSearch);
 
-
+if($responseSearch->SearchResult->Id != "")     
+{
+echo "entra";
 $arr_responseSearch = array();
 $arr_responseSearch[] = $responseSearch->SearchResult->Id;
-
-
 $id = $arr_responseSearch[0];
 
 //LLamado a retrieve
@@ -119,15 +107,6 @@ if($tamano != 1) {
 
     }
 
-    // agregamos la sentencia insert y concatenamos los valoresdefinidos
-
-    echo 'idUser: ' . $idUser . "<br/>";
-    echo 'FirstName: ' . $FirstName . "<br/>";
-    echo 'LastName: ' . $LastName . "<br/>";
-    echo 'EmailAddress: ' . $EmailAddress . "<br/>"; 
-    echo 'EventId: ' . $EventId . "<br/>";
-    echo 'maxValor: ' . $maxValor . "<br/>";
-
 }
 else
 {
@@ -165,12 +144,9 @@ else
         $maxValor = max($valor);
 
 }
-    echo 'idUser: ' . $idUser . "<br/>";
-    echo 'FirstName: ' . $FirstName . "<br/>";
-    echo 'LastName: ' . $LastName . "<br/>";
-    echo 'EmailAddress: ' . $EmailAddress . "<br/>"; 
-    echo 'EventId: ' . $EventId . "<br/>";
-    echo 'maxValor: ' . $maxValor . "<br/>";
+}
+}else{
+    echo "No users registration";
 }
 
 
