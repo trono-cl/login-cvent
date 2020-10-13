@@ -8,9 +8,12 @@
 <body>
     <h1>Formulario</h1>
     <form action="datos2.php" method="POST">
-    
-        <label for="emaiul">email: </label>
+
+        <label for="email">email: </label>
         <input type="text" name="email" value=""><br><br>
+
+        <label for="confirmation">confirmation: </label>
+        <input type="confirmation" name="confirmation" value=""><br><br>
 
         <input type="submit" value="Enviar">
     </form>
